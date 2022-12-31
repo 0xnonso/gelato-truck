@@ -84,30 +84,6 @@ contract GelatoTruck {
         emit FlavourRemoved(_flavour);
     }
 
-    ///@dev Returns all targets that can be executed
-    ///@return _availableFlavoursToFreeze
-    function availableFlavoursToFreeze() internal view returns(address[] memory _availableFlavoursToFreeze){
-        address[] memory _flavours = getAllFlavours();
-        uint256 _flavoursLen = _flavours.length;
-        uint256 index;
-        for(uint256 i; i < _flavoursLen;){
-            address flavour = _flavours[i];
-            (bool success, bytes memory returnData) = flavour.staticcall(abi.encode(CAN_EXEC_SELECTOR));
-            bool returnValue = abi.decode(returnData, (bool));
-            if(success && returnValue){
-                _availableFlavoursToFreeze[index] = flavour;
-                index++;
-            }
-            unchecked { i++; }
-        }
-    }
-
-    ///@dev Indicates whether a target can be executed
-    ///@return bool
-    function canFreeze() public view returns(bool){
-        return availableFlavoursToFreeze().length != 0;
-    }
-
     // EXTERNAL FUNCTIONS //
 
     ///@dev Execute all executable targets. If any errors or failures is encountered, call fails silently
@@ -125,7 +101,31 @@ contract GelatoTruck {
         }
     }
 
-    // INTERNAL FUNCTIONS //
+    // VIEW FUNCTIONS //
+
+    ///@dev Indicates whether a target can be executed
+    ///@return bool
+    function canFreeze() public view returns(bool){
+        return availableFlavoursToFreeze().length != 0;
+    }
+
+    ///@dev Returns all targets that can be executed
+    ///@return _availableFlavoursToFreeze
+    function availableFlavoursToFreeze() internal view returns(address[] memory _availableFlavoursToFreeze){
+        address[] memory _flavours = getAllFlavours();
+        uint256 _flavoursLen = _flavours.length;
+        uint256 index;
+        for(uint256 i; i < _flavoursLen;){
+            address flavour = _flavours[i];
+            (bool success, bytes memory returnData) = flavour.staticcall(abi.encode(CAN_EXEC_SELECTOR));
+            bool returnValue = abi.decode(returnData, (bool));
+            if(success && returnValue){
+                _availableFlavoursToFreeze[index] = flavour;
+                index++;
+            }
+            unchecked { i++; }
+        }
+    }
 
     ///@dev Returns all targets
     function getAllFlavours() internal view returns(address[] memory){
