@@ -3,6 +3,8 @@
 # gelato-truck •
 Manage multiple gelato tasks from one smart contract.
 
+&nbsp;                         
+
 ## Getting  Started 
 ```bash
 # Clone repo
