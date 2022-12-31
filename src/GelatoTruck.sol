@@ -33,11 +33,11 @@ contract GelatoTruck {
     // MODIFIERS //
 
     modifier onlyMaestro(){
-        if(!isMaestro[msg.sender]) revert();
+        require(isMaestro[msg.sender], "Caller_Not_Maestro");
         _;
     }
     modifier onlyTruckOwner(){
-        if(msg.sender != truckOwner) revert();
+        require(msg.sender == truckOwner, "Caller_Not_TruckOwner");
         _;
     }
 
